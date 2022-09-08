@@ -1,27 +1,38 @@
 package com.example.projects.entity;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class District {
+//@Table(name = "personnel")
+public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Date date;
+
     private String name;
+
+    private Long phone;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "city_id")
     private City city;
 
-    @OneToMany(mappedBy = "district",cascade = CascadeType.ALL)
-    private List<Employee> personnelList;
+    @ManyToOne
+    @JoinColumn(name = "district_id")
+    private District district;
 }
+
+

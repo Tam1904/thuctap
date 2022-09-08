@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-//@Table(name="city")
+@Table(name="city")
 public class City {
 
     @Id
@@ -21,5 +21,5 @@ public class City {
     private List<District> districtList;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
-    private List<Personnel> personnelCityList;
+    private List<Employee> personnelCityList;
 }

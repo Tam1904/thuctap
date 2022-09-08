@@ -18,6 +18,6 @@ public class Department {
     private String name;
 
     @OneToMany(mappedBy = "department",cascade = CascadeType.ALL)
-    private List<Personnel> dePersonnelList;
+    private List<Employee> dePersonnelList;
 
 }
