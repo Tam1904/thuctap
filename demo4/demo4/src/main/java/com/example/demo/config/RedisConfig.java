@@ -25,14 +25,6 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String redisPassword;
 
-//    @Bean
-//    JedisConnectionFactory jedisConnectionFactory() {
-//        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisHost, redisPort);
-//        if (redisPassword != null && redisPassword.length() > 0) {
-//            redisStandaloneConfiguration.setPassword(RedisPassword.of(redisPassword));
-//        }
-//        return new JedisConnectionFactory(redisStandaloneConfiguration);
-//    }
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory(){
@@ -46,11 +38,5 @@ public class RedisConfig {
         return template;
     }
 
-//    @Bean
-//    @Primary
-//    public RedisTemplate<Object, Object> redisTemplate() {
-//        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-//        template.setConnectionFactory(jedisConnectionFactory());
-//        return template;
-//    }
+
 }
