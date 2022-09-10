@@ -6,10 +6,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+//@Entity
 @Getter
 @Setter
-//@Table(name = "personnel")
 public class Employee {
 
     @Id
