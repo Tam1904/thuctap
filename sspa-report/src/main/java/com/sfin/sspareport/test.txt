@@ -1,0 +1,11 @@
+ @GetMapping("/products/date/{date}")
+    public String getProducts(@PathVariable String date) throws ParseException {
+        String fm = convertDateToString(convertStringToDate(date));
+        String fm2 = convertDateToString(rollDate(date));
+        List<ShopProducts> products = getProductsBetweenDay(fm,fm2);
+        return String.valueOf(products.size());
+    }
+ @GetMapping("/customer/getAll")
+     public String getAllCustomer(){
+         return  reportingService.getAll().toString();
+     }
