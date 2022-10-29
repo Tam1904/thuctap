@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Tuple;
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -20,13 +23,12 @@ public class ChainDTO {
 
     private String createdDate;
 
-    public static ChainDTO Convert(String s) throws ParseException {
+    public static ChainDTO Convert(Tuple tuple) throws ParseException {
         ChainDTO chainDTO = new ChainDTO();
-        String [] w  = s.split(",");
-        chainDTO.setChainId(Long.parseLong(w[0]));
-        chainDTO.setName(w[1]);
-        chainDTO.setSubdomain(w[2]);
-        chainDTO.setCreatedDate(new SimpleDateFormat("dd-MM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(w[3])));
+        chainDTO.setChainId(tuple.get(0, BigInteger.class).longValue());
+        chainDTO.setName(tuple.get(1,String.class));
+        chainDTO.setSubdomain(tuple.get(2,String.class));
+        chainDTO.setCreatedDate(tuple.get(3, Timestamp.class).toString());
         return chainDTO;
     }
 }

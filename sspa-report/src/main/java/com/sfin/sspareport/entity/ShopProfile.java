@@ -25,6 +25,7 @@ public class ShopProfile implements Serializable {
     @Column(name = "chain_id")
     private Long chainId;
 
+
     @Column(name = "shop_code")
     private String shopCode;
 

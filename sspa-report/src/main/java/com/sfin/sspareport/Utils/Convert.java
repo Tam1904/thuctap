@@ -6,6 +6,7 @@ import com.sfin.sspareport.dto.ProductDTO;
 import com.sfin.sspareport.dto.ShopDTO;
 import com.sfin.sspareport.entity.ShopProducts;
 
+import javax.persistence.Tuple;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,6 +77,14 @@ public class Convert {
         return orderDTOS;
      }
 
+    public static List<OrderDTO> convertOrderV1(List<Tuple> tuples) throws ParseException {
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for(Tuple tuple : tuples){
+            orderDTOS.add(OrderDTO.convertV1(tuple));
+        }
+        return orderDTOS;
+    }
+
      public static List<ShopDTO> convertOrderShop(List<String> order) throws ParseException{
         List<ShopDTO> shopDTOS = new ArrayList<>();
         for(String s: order){
@@ -92,24 +101,42 @@ public class Convert {
         return map;
      }
 
-     public static List<ShopDTO> convertShopV2(List<String> s){
+     public static List<ShopDTO> convertShopV2(List<Tuple> tuples){
         List<ShopDTO> shopDTOS = new ArrayList<>();
-        for(String w : s){
-            shopDTOS.add(ShopDTO.convertV3(w));
+        for(Tuple w : tuples){
+            shopDTOS.add(ShopDTO.convertV2(w));
         }
         return shopDTOS;
      }
 
-     public static List<ChainDTO> convertChain(List<String> s) throws ParseException {
+    public static List<ShopDTO> convertShopV3(List<Tuple> tuples){
+        List<ShopDTO> shopDTOS = new ArrayList<>();
+        for(Tuple w : tuples){
+            shopDTOS.add(ShopDTO.convertV3(w));
+        }
+        return shopDTOS;
+    }
+
+     public static List<ChainDTO> convertChain(List<Tuple> tuples) throws ParseException {
         List<ChainDTO> chainDTOS = new ArrayList<>();
-        for(String w : s){
+        for(Tuple w : tuples){
             chainDTOS.add(ChainDTO.Convert(w));
         }
         return chainDTOS;
      }
 
+//     public static List<ProductDTO> covertV2(List<Tuple> tuples){
+//
+//     }
+
      public static String convertMoney(String s){
-        Long number = Long.parseLong(s);
+        Object number;
+        try{
+            number = Long.parseLong(s);
+        }
+        catch (Exception e){
+            number = Float.parseFloat(s);
+        }
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi","VN"));
         return numberFormat.format(number);
      }
