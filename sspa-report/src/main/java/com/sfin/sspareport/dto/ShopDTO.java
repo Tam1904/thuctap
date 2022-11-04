@@ -161,7 +161,7 @@ public class ShopDTO {
         shopDTO.setShopName(tuple.get(1,String.class));
         shopDTO.setPhone(tuple.get(2,String.class));
         shopDTO.setAddress(tuple.get(3,String.class));
-        shopDTO.setOrderMoney(Convert.convertMoney(tuple.get(4,BigDecimal.class).toString()));
+        shopDTO.setOrderMoney(tuple.get(4,BigDecimal.class).toString());
         return shopDTO;
     }
 

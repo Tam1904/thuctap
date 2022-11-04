@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Tuple;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.List;
@@ -25,35 +26,24 @@ public class OrderService {
     @Autowired
     private SpaOrderScheduleRepository orderRepository;
 
-    public Long getTotalOrder(String date1, String date2) throws ParseException {
-        String [] s = Convert.convert(date1,date2);
-        return orderRepository.countByCreatedDateBetween(s[0],s[1]);
-    }
-
-    public String getTotalMoney(String date1, String date2) throws ParseException{
-        String [] s = Convert.convert(date1,date2);
-        Locale locale = new Locale("vi","VN");
-        NumberFormat numberFormat = NumberFormat.getInstance(locale);
-        Long total = orderRepository.totalMoney(s[0],s[1]);
-        return numberFormat.format(total);
-    }
-
-    public String [] getCountAndTotalMoney(String date1, String date2) throws ParseException {
-        String [] s = Convert.convert(date1,date2);
-        String [] s2 = orderRepository.getCountAndTotalMoney(s[0],s[1]).split(",");
-        s2[1] = Convert.convertMoney(s[1]);
-        return s2;
-    }
-
     public Response getOrderDetailShop(String date1, String date2, Integer page) throws ParseException{
         String [] s = Convert.convert(date1,date2);
         Pageable pageable = PageRequest.of(page-1,size);
         Page<Tuple> orders = orderRepository.totalMoneyGroupByShopId(s[0],s[1],pageable);
         String [] s2 = orderRepository.getCountAndTotalMoney(s[0],s[1]).split(",");
-        s2[1] = Convert.convertMoney(s2[1]);
         Response response = new Response();
-        response.putDataValue("amount order", s2[0]);
-        response.putDataValue("total money", s2[1]);
+        try{
+            response.putDataValue("amount order", Long.parseLong(s2[0]));
+        }
+        catch (Exception e){
+            response.putDataValue("amount order", Long.parseLong("0"));
+        }
+        try{
+            response.putDataValue("total money", new BigDecimal(s2[1]).toString());
+        }
+        catch (Exception e){
+            response.putDataValue("total money", "0");
+        }
         List<ShopDTO> shopDTOS = Convert.convertShopV3(orders.getContent());
         response.putDataValue("list shop", shopDTOS);
         response.putDataValue("begin",1);
@@ -62,11 +52,6 @@ public class OrderService {
         return response;
     }
 
-    List<SpaOrderSchedule> getOrderByShopId(String date1, String date2, Long shopId) throws ParseException {
-        String [] s = Convert.convert(date1,date2);
-        List<SpaOrderSchedule> orders = orderRepository.getOrderByShopId(s[0],s[1],shopId);
-        return orders;
-    }
 
     public Response getOrder(String date1, String date2, Long shopId, Integer page) throws ParseException {
         String [] s = Convert.convert(date1,date2);

@@ -5,11 +5,13 @@ import com.sfin.sspareport.Utils.Response;
 import com.sfin.sspareport.Utils.ResponseData;
 import com.sfin.sspareport.dto.ChainDTO;
 import com.sfin.sspareport.dto.ProductDTO;
+import com.sfin.sspareport.dto.ReportDTO;
 import com.sfin.sspareport.dto.ShopDTO;
 import com.sfin.sspareport.entity.ShopProducts;
 import com.sfin.sspareport.entity.ShopProfile;
 import com.sfin.sspareport.service.OrderService;
 import com.sfin.sspareport.service.ProductService;
+import com.sfin.sspareport.service.ReportService;
 import com.sfin.sspareport.service.ShopService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -37,14 +41,15 @@ public class ReportingController {
     @Autowired
     private ShopService shopService;
 
+    @Autowired
+    private ReportService reportService;
+
     private int size = 5;
 
     @ApiOperation(value = "Get total product and list product between two days", produces = "application/json")
     @GetMapping("/productCreated")
     public Response getProductsBetween(@RequestParam String beginDate, @RequestParam String endDate, @RequestParam Integer page) throws ParseException {
-        Long total = productService.getTotalProductByDate(beginDate, endDate);
         Response response = productService.getByShopIdAndDate(beginDate, endDate,page);
-        response.putDataValue("total product", total);
         return response;
     }
 
@@ -52,7 +57,7 @@ public class ReportingController {
     @GetMapping("/productCreated/shop/{shopId}")
     public Response getProductsByShopIdAndDate(@PathVariable Long shopId, @RequestParam String beginDate, @RequestParam String endDate
             , @RequestParam("page") Integer page) throws ParseException {
-        Response response = productService.getProductsByShopIAndDate(beginDate,endDate,shopId,page);
+        Response response = productService.getProductsByShopIdAndDate(beginDate,endDate,shopId,page);
         return response;
     }
 
@@ -95,6 +100,19 @@ public class ReportingController {
     public Response getShopProfileByChain(@PathVariable("chainId") Long chainId, @RequestParam String beginDate
             , @RequestParam String endDate, @RequestParam Integer page) throws ParseException {
         Response response = shopService.getShopProfileV2(beginDate, endDate, chainId,page);
+        return response;
+    }
+
+    @PutMapping("/updated")
+    public void updateReport() throws ParseException {
+        reportService.updateReport();
+    }
+
+    @GetMapping("/report")
+    public Response report(@RequestParam String month, @RequestParam String year) throws ParseException{
+        Date date3 = new Date(new SimpleDateFormat("MM-yyyy").parse(month + "-" + year).getTime());
+        System.out.println(date3);
+        Response response = reportService.getPercent(date3);
         return response;
     }
 

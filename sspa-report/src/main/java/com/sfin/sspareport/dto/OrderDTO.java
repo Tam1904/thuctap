@@ -29,22 +29,12 @@ public class OrderDTO {
 
     private Timestamp createdDate;
 
-    public static OrderDTO convert(String s) throws ParseException {
-        OrderDTO orderDTO = new OrderDTO();
-        String []w = s.split(",");
-        orderDTO.setOrderId(Long.parseLong(w[0]));
-        orderDTO.setCustomerName(w[1]);
-        orderDTO.setMoney(NumberFormat.getInstance(new Locale("vi","VN")).format(Long.parseLong(w[3])));
-//        orderDTO.setCreatedDate(new SimpleDateFormat("dd-MM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(w[2])));
-        return orderDTO;
-    }
-
     public static OrderDTO convertV1(Tuple tuple) throws ParseException {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setOrderId(tuple.get(0, BigInteger.class).longValue());
         orderDTO.setCustomerId(tuple.get(1,BigInteger.class).longValue());
         orderDTO.setCustomerName(tuple.get(2,String.class));
-        orderDTO.setMoney(Convert.convertMoney(tuple.get(4, BigDecimal.class).toString()));
+        orderDTO.setMoney(tuple.get(4, BigDecimal.class).toString());
         orderDTO.setCreatedDate(tuple.get(3, Timestamp.class));
         return orderDTO;
     }

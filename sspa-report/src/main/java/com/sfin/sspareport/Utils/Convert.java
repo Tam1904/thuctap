@@ -25,7 +25,7 @@ public class Convert {
         Calendar calendar = Calendar.getInstance();
         Date date1 = convertStringToDate(date);
         calendar.setTime(date1);
-        calendar.roll(Calendar.DATE,1);
+        calendar.add(Calendar.DATE,1);
         return calendar.getTime();
     }
 
@@ -54,28 +54,12 @@ public class Convert {
         return productDTOS;
     }
 
-    public static List<ShopDTO> convertListShop(List<String> list){
-        List<ShopDTO> shop = new ArrayList<>();
-        for(String s : list){
-            shop.add(ShopDTO.convert(s));
-        }
-        return shop;
-    }
-
     public static String [] convert(String date1, String date2) throws ParseException {
         String [] s = new String [2];
         s[0] = Convert.convertDateToString(Convert.convertStringToDate(date1));
         s[1] = Convert.convertDateToString(Convert.rollDate(date2));
         return  s;
     }
-
-     public static List<OrderDTO> convertOrder(List<String> orders) throws ParseException {
-        List<OrderDTO> orderDTOS = new ArrayList<>();
-        for(String s: orders){
-            orderDTOS.add(OrderDTO.convert(s));
-        }
-        return orderDTOS;
-     }
 
     public static List<OrderDTO> convertOrderV1(List<Tuple> tuples) throws ParseException {
         List<OrderDTO> orderDTOS = new ArrayList<>();
@@ -84,22 +68,6 @@ public class Convert {
         }
         return orderDTOS;
     }
-
-     public static List<ShopDTO> convertOrderShop(List<String> order) throws ParseException{
-        List<ShopDTO> shopDTOS = new ArrayList<>();
-        for(String s: order){
-            shopDTOS.add(ShopDTO.convertV1(s));
-        }
-        return shopDTOS;
-     }
-
-     public static HashMap<Long, String> convertMapOrder(List<ShopDTO> dtos){
-        HashMap<Long,String> map = new HashMap<>();
-        for(ShopDTO o : dtos){
-            map.put(o.getShopId(),o.getOrderMoney());
-        }
-        return map;
-     }
 
      public static List<ShopDTO> convertShopV2(List<Tuple> tuples){
         List<ShopDTO> shopDTOS = new ArrayList<>();
@@ -125,20 +93,23 @@ public class Convert {
         return chainDTOS;
      }
 
-//     public static List<ProductDTO> covertV2(List<Tuple> tuples){
-//
-//     }
-
      public static String convertMoney(String s){
         Object number;
         try{
             number = Long.parseLong(s);
         }
-        catch (Exception e){
+        catch (NumberFormatException e){
             number = Float.parseFloat(s);
+        }
+        catch (Exception e){
+            number = 0;
         }
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi","VN"));
         return numberFormat.format(number);
+     }
+
+     public static String convertDateToDate(String date) throws ParseException{
+        return new SimpleDateFormat("dd-MM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(date));
      }
 }
 

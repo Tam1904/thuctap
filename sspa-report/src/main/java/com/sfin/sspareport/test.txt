@@ -9,3 +9,28 @@
      public String getAllCustomer(){
          return  reportingService.getAll().toString();
      }
+@Query(value = "select YEAR(sr.report_date), WEEKOFYEAR(sr.report_date), sum(sr.amount_chain), sum(sr.amount_shop), sum(sr.amount_product), sum(sr.amount_order), sum(sr.total_money) from SSHOP_REPORTING.SHOP_REPORT sr group by YEAR(sr.report_date), WEEKOFYEAR(sr.report_date)", nativeQuery = true)
+    List<String> getAll();
+
+    @Query(value = "select YEAR(sr.report_date), MONTH(sr.report_date), sum(sr.amount_chain), sum(sr.amount_shop), sum(sr.amount_product), sum(sr.amount_order), sum(sr.total_money) from SSHOP_REPORTING.SHOP_REPORT sr group by YEAR(sr.report_date), MONTH (sr.report_date)",nativeQuery = true)
+    List<String> getByWeek(@Param("date") Date date);
+
+private Long amountChain;
+
+    private Long amountShop;
+
+    private Long amountProduct;
+
+    private Long amountOrder;
+
+    private BigDecimal totalMoney;
+
+ public static ReportDTO convert(Tuple tuple){
+        ReportDTO reportDto = new ReportDTO();
+        reportDto.setAmountChain(tuple.get(0, BigInteger.class).longValue());
+        reportDto.setAmountShop(tuple.get(1,BigInteger.class).longValue());
+        reportDto.setAmountProduct(tuple.get(2,BigInteger.class).longValue());
+        reportDto.setAmountOrder(tuple.get(3,BigInteger.class).longValue());
+        reportDto.setTotalMoney(tuple.get(4,BigDecimal.class));
+        return reportDto;
+    }

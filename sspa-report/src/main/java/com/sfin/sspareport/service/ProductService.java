@@ -23,36 +23,28 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private Integer size =2;
+    private Integer size =5;
     @Autowired
     private ShopProductsRepository productsRepository;
 
-    public Long getTotalProductByDate(String date1, String date2) throws ParseException {
-        String [] s = Convert.convert(date1,date2);
-        return productsRepository.findAllByCreatedDate(s[0],s[1]);
-    }
 
     public Response getByShopIdAndDate(String date1, String date2, Integer page) throws ParseException {
         String [] s = Convert.convert(date1,date2);
         Pageable pageable = PageRequest.of(page-1,size);
         Page<Tuple> pages = productsRepository.findByShopAndDate(s[0],s[1],pageable);
+        Long total = productsRepository.findAllByCreatedDate(s[0],s[1]);
         Response response = new Response();
         List<ShopDTO> shopDTOS = Convert.convertShopV2(pages.getContent());
-        System.out.println(pages.getContent());
         response.putDataValue("begin",1);
         response.putDataValue("end", pages.getTotalPages());
         response.putDataValue("current",page);
+        response.putDataValue("amount product", total);
         response.putDataValue("list shop", shopDTOS);
-        response.putDataValue("amount shop", pages.getTotalElements());
+        response.putDataValue("amount product", pages.getTotalElements());
         return response;
     }
 
-    public List<ShopProducts> getProductsByShopIAndDate(String date1, String date2, Long shopId) throws ParseException {
-        String [] s = Convert.convert(date1,date2);
-        return productsRepository.findShopProductsByShopIdAndDate(s[0],s[1],shopId);
-    }
-
-    public Response getProductsByShopIAndDate(String date1, String date2, Long shopId, Integer page) throws ParseException {
+    public Response getProductsByShopIdAndDate(String date1, String date2, Long shopId, Integer page) throws ParseException {
         String [] s = Convert.convert(date1,date2);
         Pageable pageable = PageRequest.of(page-1,size);
         Page<ShopProducts> pages = productsRepository.findProductsByShopAndDate(s[0],s[1],shopId,pageable);

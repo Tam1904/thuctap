@@ -19,28 +19,18 @@ import java.util.List;
 @Repository
 public interface ShopProductsRepository extends JpaRepository<ShopProducts, Long>, JpaSpecificationExecutor<ShopProducts> {
 
-    @Query(value = "select count(*) from POD_01.SHOP_PRODUCTS s ,POD_01.SPA_SALARY_DETAIL_PRODUCT spa where s.created_date >= :date and s.created_date <= :date2 and s.product_id = spa.product_id", nativeQuery = true)
+    // lấy tổng số sản phẩm được tạo ra giữa 2 ngày -> OK
+    @Query(value = "select count(s.product_id) from POD_01.SHOP_PRODUCTS s left join POD_01.SPA_SALARY_DETAIL_PRODUCT spa on s.product_id = spa.product_id  where s.created_date >= :date and s.created_date <= :date2", nativeQuery = true)
     Long findAllByCreatedDate(@Param("date") String date, @Param("date2") String date2);
 
-    @Query(value = "select s.shop_id, s.shop_name, count(*) from POD_01.SHOP_PRODUCTS s inner join POD_01.SPA_SALARY_DETAIL_PRODUCT spa on s.product_id = spa.product_id where s.created_date >= :date1 and s.created_date < :date2 group by s.shop_id", nativeQuery = true)
-    List<String> findByShopIdAndDate(@Param("date1") String date, @Param("date2") String date2);
-
-//    @Query(value = "select s.shop_id, ss.shop_name, count(*) from POD_01.SHOP_PRODUCTS s , POD_01.SPA_SALARY_DETAIL_PRODUCT spa, SSHOP_MANAGEMENT.SHOP_PROFILE ss where s.product_id = spa.product_id and s.created_date >= :date1 and s.created_date < :date2 and ss.shop_id = s.shop_id group by s.shop_id", nativeQuery = true)
-//    List<String> findByShopAndDate(@Param("date1") String date, @Param("date2") String date2);
-
-    @Query(value = "select s.shop_id, ss.shop_name, count(*), ss.shop_phone,concat(ss.ward_name,', ', ss.district_name, ', ', ss.province_name )   from POD_01.SHOP_PRODUCTS s , POD_01.SPA_SALARY_DETAIL_PRODUCT spa, SSHOP_MANAGEMENT.SHOP_PROFILE ss where s.product_id = spa.product_id and s.created_date >= :date1 and s.created_date < :date2 and ss.shop_id = s.shop_id group by s.shop_id"
+    // thông tin các shop và số lượng sản phẩm tạo ra
+    @Query(value = "select s.shop_id, ss.shop_name, count(s.product_id), ss.shop_phone,concat(ss.ward_name,', ', ss.district_name, ', ', ss.province_name )   from POD_01.SHOP_PRODUCTS s , POD_01.SPA_SALARY_DETAIL_PRODUCT spa, SSHOP_MANAGEMENT.SHOP_PROFILE ss where s.product_id = spa.product_id and s.created_date >= :date1 and s.created_date < :date2 and ss.shop_id = s.shop_id group by s.shop_id"
             , countQuery = "select s.shop_id, ss.shop_name, count(*), ss.shop_phone,concat(ss.ward_name,', ', ss.district_name, ', ', ss.province_name )   from POD_01.SHOP_PRODUCTS s , POD_01.SPA_SALARY_DETAIL_PRODUCT spa, SSHOP_MANAGEMENT.SHOP_PROFILE ss where s.product_id = spa.product_id and s.created_date >= :date1 and s.created_date < :date2 and ss.shop_id = s.shop_id group by s.shop_id",nativeQuery = true)
     Page<Tuple> findByShopAndDate(@Param("date1") String date, @Param("date2") String date2,Pageable pageable);
 
-    @Query(value = "select * from POD_01.SHOP_PRODUCTS s where s.created_date >= :date1 and s.created_date < :date2 and s.shop_id = :shopId", nativeQuery = true)
-    List<ShopProducts> findShopProductsByShopIdAndDate(@Param("date1") String date, @Param("date2") String date2, @Param("shopId") Long shopId);
-
+    // danh sách sản phẩm cửa shop đó
     @Query(value = "select * from POD_01.SHOP_PRODUCTS s where s.created_date >= :date1 and s.created_date < :date2 and s.shop_id = :shopId",
             countQuery = "select * from POD_01.SHOP_PRODUCTS s where s.created_date >= :date1 and s.created_date < :date2 and s.shop_id = :shopId", nativeQuery = true)
     Page<ShopProducts> findProductsByShopAndDate(@Param("date1") String date1, @Param("date2") String date2, @Param("shopId") Long shopId, Pageable pageable);
-
-    @Query(value = "select *  from SSHOP_MANAGEMENT.SHOP_PROFILE s  where s.chain_id = :chainId and s.created_date >= :date1 and s.created_date < :date2",nativeQuery = true)
-    Page<ShopProfile> getShopByChainId(@Param("chainId") Long chainId, @Param("date1")String date1, @Param("date2")String date2, Pageable pageable);
-
 
 }

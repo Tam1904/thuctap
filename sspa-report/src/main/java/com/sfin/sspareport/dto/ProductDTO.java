@@ -31,8 +31,4 @@ public class ProductDTO {
         return productDTO;
     }
 
-//    public static ProductDTO convertV1(Tuple tuple){
-//        ProductDTO productDTO = new ProductDTO();
-//        productDTO.setProductId(tuple.get(0, BigInteger));
-//    }
 }

@@ -24,33 +24,23 @@ public class ShopService {
     @Autowired
     private ShopProfileRepository shopRepository;
 
-    private Integer size = 2;
+    private Integer size = 5;
 
     public Response getChain(String date1, String date2, Integer page) throws ParseException {
-        Pageable pageable = PageRequest.of(page-1,size);
+        Pageable pageable = PageRequest.of(page-1,5);
         String[] s = Convert.convert(date1, date2);
         Page<Tuple> pages = shopRepository.getChain(s[0], s[1],pageable);
+        Long totalShop = shopRepository.getTotalShop(s[0],s[1]);
         List<ChainDTO> chainDTOS = Convert.convertChain(pages.getContent());
         Response response = new Response();
         response.putDataValue("amount chain", pages.getTotalElements());
+        response.putDataValue("amount shop",totalShop);
         response.putDataValue("begin", 1);
         response.putDataValue("current page", page);
         response.putDataValue("end", pages.getTotalPages());
         response.putDataValue("list shop", chainDTOS);
         return response;
     }
-
-//    public List<String> getShopId(String date1, String date2,Long chainId) throws ParseException {
-//        String [] s = Convert.convert(date1,date2);
-//        return shopRepository.getShopByChainId(chainId, s[0],s[1]);
-//    }
-
-//    public List<ShopDTO> getShopProfile(String date1, String date2, Long chainId) throws ParseException {
-//        String [] s = Convert.convert(date1,date2);
-//        List<String> s1 = shopRepository.getShopByChainId(chainId,s[0],s[1]);
-//        List<ShopDTO> shopDTOS = Convert.convertShopV2(s1);
-//        return shopDTOS;
-//    }
 
     public Response getShopProfileV2(String date1, String date2, Long chainId, Integer page) throws ParseException {
         Pageable pageable = PageRequest.of(page - 1, size);
